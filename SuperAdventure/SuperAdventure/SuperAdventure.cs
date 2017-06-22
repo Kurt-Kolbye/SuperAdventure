@@ -139,6 +139,9 @@ namespace SuperAdventure
                 btnSouth.Visible = (player.CurrentLocation.LocationToSouth != null);
                 btnWest.Visible = (player.CurrentLocation.LocationToWest != null);
 
+                // Show/hide Trade button
+                btnTrade.Visible = (player.CurrentLocation.VendorWorkingHere != null);
+
                 // Display current location name and description
                 rtbLocation.Text = player.CurrentLocation.Name + Environment.NewLine;
                 rtbLocation.Text += player.CurrentLocation.Description + Environment.NewLine;
@@ -201,8 +204,15 @@ namespace SuperAdventure
         {
             // Get the currently selected potion from the combobox
             HealingPotion potion = (HealingPotion)cboPotions.SelectedItem;
-
+            
             player.UsePotion(potion);
+        }
+
+        private void btnTrade_Click(object sender, EventArgs e)
+        {
+            TradingScreen tradingScreen = new TradingScreen(player);
+            tradingScreen.StartPosition = FormStartPosition.CenterParent;
+            tradingScreen.ShowDialog(this);
         }
 
         private void SuperAdventure_FormClosing(object sender, FormClosingEventArgs e)
