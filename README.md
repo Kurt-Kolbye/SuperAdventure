@@ -1,4 +1,4 @@
-# SuperAdventure 
+# SuperAdventure Version 2.0
 SuperAdventure Repository 
 Version 2.0
 
