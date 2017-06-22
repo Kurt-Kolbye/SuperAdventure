@@ -33,6 +33,22 @@ namespace Engine
             }
         }
 
+        public int ItemID
+        {
+            get
+            {
+                return Details.ID;
+            }
+        }
+
+        public int Price
+        {
+            get
+            {
+                return Details.Price;
+            }
+        }
+
         private int quantity;
         public int Quantity
         {

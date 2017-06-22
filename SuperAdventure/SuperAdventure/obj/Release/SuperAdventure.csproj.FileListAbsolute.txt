@@ -9,3 +9,4 @@ C:\Users\Kurt\Documents\Visual Studio 2015\Projects\SuperAdventure\SuperAdventur
 C:\Users\Kurt\Documents\Visual Studio 2015\Projects\SuperAdventure\SuperAdventure\obj\Release\SuperAdventure.csproj.GenerateResource.Cache
 C:\Users\Kurt\Documents\Visual Studio 2015\Projects\SuperAdventure\SuperAdventure\obj\Release\SuperAdventure.exe
 C:\Users\Kurt\Documents\Visual Studio 2015\Projects\SuperAdventure\SuperAdventure\obj\Release\SuperAdventure.pdb
+C:\Users\Kurt\Documents\Visual Studio 2015\Projects\SuperAdventure\SuperAdventure\obj\Release\SuperAdventure.TradingScreen.resources
