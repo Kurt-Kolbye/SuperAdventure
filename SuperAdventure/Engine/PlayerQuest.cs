@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace Engine
 {
     public class PlayerQuest : INotifyPropertyChanged
     {
         private Quest details;
+        private bool isCompleted;
+
         public Quest Details
         {
-            get
-            {
-                return details;
-            }
+            get { return details; }
             set
             {
                 details = value;
@@ -23,27 +17,20 @@ namespace Engine
             }
         }
 
-        public string Name
-        {
-            get
-            {
-                return Details.Name;
-            }
-        }
-
-        private bool isCompleted;
         public bool IsCompleted
         {
-            get
-            {
-                return isCompleted;
-            }
+            get { return isCompleted; }
             set
             {
                 isCompleted = value;
                 OnPropertyChanged("IsCompleted");
                 OnPropertyChanged("Name");
             }
+        }
+
+        public string Name
+        {
+            get { return Details.Name; }
         }
 
         public PlayerQuest(Quest details)

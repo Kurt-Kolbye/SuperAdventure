@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Linq;
 
 namespace Engine
@@ -11,7 +6,7 @@ namespace Engine
     public class Vendor : INotifyPropertyChanged
     {
         public string Name { get; set; }
-        public BindingList<InventoryItem> Inventory { get; private set; }
+        public BindingList<InventoryItem> Inventory { get; set; }
 
         public Vendor(string name)
         {
@@ -23,14 +18,14 @@ namespace Engine
         {
             InventoryItem item = Inventory.SingleOrDefault(ii => ii.Details.ID == itemToAdd.ID);
 
-            if(item == null)
+            if (item == null)
             {
-                //They didn't have the item, so add it to their inventory
+                // They didn't have the item, so add it to their inventory
                 Inventory.Add(new InventoryItem(itemToAdd, quantity));
             }
             else
             {
-                //They have the item in their inventory, so increase the quantity
+                // They have the item in their inventory, so increase the quantity
                 item.Quantity += quantity;
             }
 
@@ -40,29 +35,31 @@ namespace Engine
         public void RemoveItemFromInventory(Item itemToRemove, int quantity = 1)
         {
             InventoryItem item = Inventory.SingleOrDefault(ii => ii.Details.ID == itemToRemove.ID);
-            
-            if(item == null)
+
+            if (item == null)
             {
-                //The item is not in the player's inventory, so ignore it
-                //We might want to raise an error for this situation
+                // The item is not in the player's inventory, so ignore it.
+                // We might want to raise an error for this situation
             }
             else
             {
-                //They have the item in their inventory, so decrease the quantity
+                // They have the item in their inventory, so decrease the quantity
                 item.Quantity -= quantity;
 
-                //Don't allow negative values
-                //We might want to raise an error for this situation
-                if(item.Quantity < 0)
+                // Don't allow negative quantities.
+                // We might want to raise an error for this situation
+                if (item.Quantity < 0)
                 {
                     item.Quantity = 0;
                 }
 
-                if(item.Quantity == 0)
+                // If the quantity is zero, remove the item from the list
+                if (item.Quantity == 0)
                 {
                     Inventory.Remove(item);
                 }
 
+                // Notify the UI that the inventory has changed
                 OnPropertyChanged("Inventory");
             }
         }
@@ -71,7 +68,7 @@ namespace Engine
 
         private void OnPropertyChanged(string name)
         {
-            if(PropertyChanged != null)
+            if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
             }
