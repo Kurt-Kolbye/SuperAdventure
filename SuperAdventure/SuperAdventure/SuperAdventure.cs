@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 
@@ -17,7 +12,7 @@ namespace SuperAdventure
     {
         private const string PLAYER_DATA_FILE_NAME = "PlayerData.xml";
 
-        private Player player;
+        private Player _player;
 
         public SuperAdventure()
         {
@@ -25,22 +20,22 @@ namespace SuperAdventure
 
             if (File.Exists(PLAYER_DATA_FILE_NAME))
             {
-                player = Player.CreatePlayerFromXmlString(File.ReadAllText(PLAYER_DATA_FILE_NAME));
+                _player = Player.CreatePlayerFromXmlString(File.ReadAllText(PLAYER_DATA_FILE_NAME));
             }
             else
             {
-                player = Player.CreateDefaultPlayer();
+                _player = Player.CreateDefaultPlayer();
             }
 
-            lblHitPoints.DataBindings.Add("Text", player, "CurrentHitPoints");
-            lblGold.DataBindings.Add("Text", player, "Gold");
-            lblExperience.DataBindings.Add("Text", player, "ExperiencePoints");
-            lblLevel.DataBindings.Add("Text", player, "Level");
+            lblHitPoints.DataBindings.Add("Text", _player, "CurrentHitPoints");
+            lblGold.DataBindings.Add("Text", _player, "Gold");
+            lblExperience.DataBindings.Add("Text", _player, "ExperiencePoints");
+            lblLevel.DataBindings.Add("Text", _player, "Level");
 
             dgvInventory.RowHeadersVisible = false;
             dgvInventory.AutoGenerateColumns = false;
 
-            dgvInventory.DataSource = player.Inventory;
+            dgvInventory.DataSource = _player.Inventory;
 
             dgvInventory.Columns.Add(new DataGridViewTextBoxColumn
             {
@@ -51,14 +46,14 @@ namespace SuperAdventure
 
             dgvInventory.Columns.Add(new DataGridViewTextBoxColumn
             {
-                HeaderText = "Qty",
+                HeaderText = "Quantity",
                 DataPropertyName = "Quantity"
             });
 
             dgvQuests.RowHeadersVisible = false;
             dgvQuests.AutoGenerateColumns = false;
 
-            dgvQuests.DataSource = player.Quests;
+            dgvQuests.DataSource = _player.Quests;
 
             dgvQuests.Columns.Add(new DataGridViewTextBoxColumn
             {
@@ -73,25 +68,25 @@ namespace SuperAdventure
                 DataPropertyName = "IsCompleted"
             });
 
-            cboWeapons.DataSource = player.Weapons;
+            cboWeapons.DataSource = _player.Weapons;
             cboWeapons.DisplayMember = "Name";
             cboWeapons.ValueMember = "Id";
 
-            if (player.CurrentWeapon != null)
+            if (_player.CurrentWeapon != null)
             {
-                cboWeapons.SelectedItem = player.CurrentWeapon;
+                cboWeapons.SelectedItem = _player.CurrentWeapon;
             }
 
             cboWeapons.SelectedIndexChanged += cboWeapons_SelectedIndexChanged;
 
-            cboPotions.DataSource = player.Potions;
+            cboPotions.DataSource = _player.Potions;
             cboPotions.DisplayMember = "Name";
             cboPotions.ValueMember = "Id";
 
-            player.PropertyChanged += PlayerOnPropertyChanged;
-            player.OnMessage += DisplayMessage;
+            _player.PropertyChanged += PlayerOnPropertyChanged;
+            _player.OnMessage += DisplayMessage;
 
-            player.MoveTo(player.CurrentLocation);
+            _player.MoveTo(_player.CurrentLocation);
         }
 
         private void DisplayMessage(object sender, MessageEventArgs messageEventArgs)
@@ -111,9 +106,9 @@ namespace SuperAdventure
         {
             if (propertyChangedEventArgs.PropertyName == "Weapons")
             {
-                cboWeapons.DataSource = player.Weapons;
+                cboWeapons.DataSource = _player.Weapons;
 
-                if (!player.Weapons.Any())
+                if (!_player.Weapons.Any())
                 {
                     cboWeapons.Visible = false;
                     btnUseWeapon.Visible = false;
@@ -122,9 +117,9 @@ namespace SuperAdventure
 
             if (propertyChangedEventArgs.PropertyName == "Potions")
             {
-                cboPotions.DataSource = player.Potions;
+                cboPotions.DataSource = _player.Potions;
 
-                if (!player.Potions.Any())
+                if (!_player.Potions.Any())
                 {
                     cboPotions.Visible = false;
                     btnUsePotion.Visible = false;
@@ -134,19 +129,18 @@ namespace SuperAdventure
             if (propertyChangedEventArgs.PropertyName == "CurrentLocation")
             {
                 // Show/hide available movement buttons
-                btnNorth.Visible = (player.CurrentLocation.LocationToNorth != null);
-                btnEast.Visible = (player.CurrentLocation.LocationToEast != null);
-                btnSouth.Visible = (player.CurrentLocation.LocationToSouth != null);
-                btnWest.Visible = (player.CurrentLocation.LocationToWest != null);
+                btnNorth.Visible = (_player.CurrentLocation.LocationToNorth != null);
+                btnEast.Visible = (_player.CurrentLocation.LocationToEast != null);
+                btnSouth.Visible = (_player.CurrentLocation.LocationToSouth != null);
+                btnWest.Visible = (_player.CurrentLocation.LocationToWest != null);
 
-                // Show/hide Trade button
-                btnTrade.Visible = (player.CurrentLocation.VendorWorkingHere != null);
+                btnTrade.Visible = (_player.CurrentLocation.VendorWorkingHere != null);
 
                 // Display current location name and description
-                rtbLocation.Text = player.CurrentLocation.Name + Environment.NewLine;
-                rtbLocation.Text += player.CurrentLocation.Description + Environment.NewLine;
+                rtbLocation.Text = _player.CurrentLocation.Name + Environment.NewLine;
+                rtbLocation.Text += _player.CurrentLocation.Description + Environment.NewLine;
 
-                if (player.CurrentLocation.MonsterLivingHere == null)
+                if (_player.CurrentLocation.MonsterLivingHere == null)
                 {
                     cboWeapons.Visible = false;
                     cboPotions.Visible = false;
@@ -155,41 +149,32 @@ namespace SuperAdventure
                 }
                 else
                 {
-                    cboWeapons.Visible = player.Weapons.Any();
-                    cboPotions.Visible = player.Potions.Any();
-                    btnUseWeapon.Visible = player.Weapons.Any();
-                    btnUsePotion.Visible = player.Potions.Any();
-                }
-
-                if (cboWeapons.Visible == false && cboPotions.Visible == false)
-                {
-                    label5.Visible = false;
-                }
-                else
-                {
-                    label5.Visible = true;
+                    cboWeapons.Visible = _player.Weapons.Any();
+                    cboPotions.Visible = _player.Potions.Any();
+                    btnUseWeapon.Visible = _player.Weapons.Any();
+                    btnUsePotion.Visible = _player.Potions.Any();
                 }
             }
         }
 
         private void btnNorth_Click(object sender, EventArgs e)
         {
-            player.MoveNorth();
+            _player.MoveNorth();
         }
 
         private void btnEast_Click(object sender, EventArgs e)
         {
-            player.MoveEast();
+            _player.MoveEast();
         }
 
         private void btnSouth_Click(object sender, EventArgs e)
         {
-            player.MoveSouth();
+            _player.MoveSouth();
         }
 
         private void btnWest_Click(object sender, EventArgs e)
         {
-            player.MoveWest();
+            _player.MoveWest();
         }
 
         private void btnUseWeapon_Click(object sender, EventArgs e)
@@ -197,32 +182,32 @@ namespace SuperAdventure
             // Get the currently selected weapon from the cboWeapons ComboBox
             Weapon currentWeapon = (Weapon)cboWeapons.SelectedItem;
 
-            player.UseWeapon(currentWeapon);
+            _player.UseWeapon(currentWeapon);
         }
 
         private void btnUsePotion_Click(object sender, EventArgs e)
         {
             // Get the currently selected potion from the combobox
             HealingPotion potion = (HealingPotion)cboPotions.SelectedItem;
-            
-            player.UsePotion(potion);
-        }
 
-        private void btnTrade_Click(object sender, EventArgs e)
-        {
-            TradingScreen tradingScreen = new TradingScreen(player);
-            tradingScreen.StartPosition = FormStartPosition.CenterParent;
-            tradingScreen.ShowDialog(this);
+            _player.UsePotion(potion);
         }
 
         private void SuperAdventure_FormClosing(object sender, FormClosingEventArgs e)
         {
-            File.WriteAllText(PLAYER_DATA_FILE_NAME, player.ToXmlString());
+            File.WriteAllText(PLAYER_DATA_FILE_NAME, _player.ToXmlString());
         }
 
         private void cboWeapons_SelectedIndexChanged(object sender, EventArgs e)
         {
-            player.CurrentWeapon = (Weapon)cboWeapons.SelectedItem;
+            _player.CurrentWeapon = (Weapon)cboWeapons.SelectedItem;
+        }
+
+        private void btnTrade_Click(object sender, EventArgs e)
+        {
+            TradingScreen tradingScreen = new TradingScreen(_player);
+            tradingScreen.StartPosition = FormStartPosition.CenterParent;
+            tradingScreen.ShowDialog(this);
         }
     }
 }
